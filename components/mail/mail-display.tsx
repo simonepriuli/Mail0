@@ -1,4 +1,4 @@
-import {useState, useEffect} from "react";
+import { useState, useEffect, Dispatch } from "react";
 import { addDays } from "date-fns/addDays";
 import { addHours } from "date-fns/addHours";
 import { format } from "date-fns/format";
@@ -13,17 +13,14 @@ import {
   ReplyAll,
   Trash2,
   BellOff,
+  X,
 } from "lucide-react";
 
 import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -44,12 +41,14 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Mail } from "@/components/mail/data";
+import { SetStateAction } from "jotai";
 
 interface MailDisplayProps {
   mail: Mail | null;
+  setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export function MailDisplay({ mail }: MailDisplayProps) {
+export function MailDisplay({ mail, setOpen }: MailDisplayProps) {
   const today = new Date();
   // Create local state for the muted flag.
   const [isMuted, setIsMuted] = useState(mail ? mail.muted : false);
@@ -194,6 +193,16 @@ export function MailDisplay({ mail }: MailDisplayProps) {
             <DropdownMenuItem>Mute thread</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+        <Separator orientation="vertical" className="mx-2 h-6" />
+        <Tooltip>
+          <TooltipTrigger asChild onClick={() => setOpen(false)}>
+            <Button variant="ghost" size="icon" disabled={!mail}>
+              <X className="h-4 w-4" />
+              <span className="sr-only">Close</span>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Close</TooltipContent>
+        </Tooltip>
       </div>
       <Separator />
       {mail ? (

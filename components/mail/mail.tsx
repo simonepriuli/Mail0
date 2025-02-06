@@ -1,9 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-  Search,
-} from "lucide-react";
+import { Search } from "lucide-react";
 import { useState } from "react";
 import {
   Dialog,
@@ -35,7 +33,7 @@ interface MailProps {
 }
 
 export function Mail({ mails }: MailProps) {
-  const [mail] = useMail();
+  const [mail, setMail] = useMail();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -44,12 +42,18 @@ export function Mail({ mails }: MailProps) {
     const checkIsMobile = () => {
       setIsMobile(window.innerWidth < 768); // 768px is the 'md' breakpoint
     };
-    
+
     checkIsMobile();
-    window.addEventListener('resize', checkIsMobile);
-    
-    return () => window.removeEventListener('resize', checkIsMobile);
+    window.addEventListener("resize", checkIsMobile);
+
+    return () => window.removeEventListener("resize", checkIsMobile);
   }, []);
+
+  React.useEffect(() => {
+    if (!isDialogOpen) {
+      setMail({ ...mail, selected: null });
+    }
+  }, [isDialogOpen]);
 
   // Only show dialog if we're on mobile
   const showDialog = isDialogOpen && isMobile;
@@ -86,14 +90,14 @@ export function Mail({ mails }: MailProps) {
               </form>
             </div>
             <TabsContent value="all" className="m-0">
-              <MailList 
-                items={mails} 
-                onMailClick={() => setIsDialogOpen(true)} 
+              <MailList
+                items={mails}
+                onMailClick={() => setIsDialogOpen(true)}
               />
             </TabsContent>
             <TabsContent value="unread" className="m-0">
-              <MailList 
-                items={mails.filter((item) => !item.read)} 
+              <MailList
+                items={mails.filter((item) => !item.read)}
                 onMailClick={() => setIsDialogOpen(true)}
               />
             </TabsContent>
@@ -101,11 +105,15 @@ export function Mail({ mails }: MailProps) {
         </div>
 
         {/* Desktop Mail Display */}
-        <div className="flex-1 overflow-y-auto hidden md:block">
-          <MailDisplay
-            mail={mails.find((item) => item.id === mail.selected) || null}
-          />
-        </div>
+
+        {isDialogOpen && (
+          <div className="flex-1 overflow-y-auto hidden md:block">
+            <MailDisplay
+              mail={mails.find((item) => item.id === mail.selected) || null}
+              setOpen={setIsDialogOpen}
+            />
+          </div>
+        )}
 
         {/* Mobile Dialog */}
         <Dialog open={showDialog} onOpenChange={setIsDialogOpen}>
@@ -115,6 +123,7 @@ export function Mail({ mails }: MailProps) {
             </DialogHeader>
             <MailDisplay
               mail={mails.find((item) => item.id === mail.selected) || null}
+              setOpen={setIsDialogOpen}
             />
           </DialogContent>
         </Dialog>
