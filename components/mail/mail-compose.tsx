@@ -44,6 +44,7 @@ export function MailCompose({ onClose, replyTo }: MailComposeProps) {
   const [attachments, setAttachments] = React.useState<File[]>([]);
   const [toInput, setToInput] = React.useState(replyTo?.email || "");
   const [showSuggestions, setShowSuggestions] = React.useState(false);
+  const [highlightedIndex, setHighlightedIndex] = React.useState(-1); // Track highlighted suggestion
 
   const [subject, setSubject] = useQueryState("subject", {
     defaultValue: "",
@@ -283,6 +284,25 @@ export function MailCompose({ onClose, replyTo }: MailComposeProps) {
     );
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (showSuggestions) {
+      if (e.key === "ArrowDown" && highlightedIndex !== pastEmails.length - 2) {
+        e.preventDefault();
+        setHighlightedIndex((prevIndex) => Math.min(prevIndex + 1, filteredSuggestions.length - 1));
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setHighlightedIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+      } else if (e.key === "Tab" || e.key === "Enter") {
+        e.preventDefault();
+        if (highlightedIndex >= 0) {
+          setToInput(filteredSuggestions[highlightedIndex]);
+          setShowSuggestions(false);
+          setHighlightedIndex(-1); // Reset highlighted index
+        }
+      }
+    }
+  };
+
   return (
     <TooltipProvider>
       <Card className="h-full w-full border-none shadow-none">
@@ -299,7 +319,9 @@ export function MailCompose({ onClose, replyTo }: MailComposeProps) {
                 onChange={(e) => {
                   setToInput(e.target.value);
                   setShowSuggestions(true);
+                  setHighlightedIndex(-1); // Reset highlighted index on input change
                 }}
+                onKeyDown={handleKeyDown} // Add key down handler
                 className="rounded-none border-0 focus-visible:ring-0"
               />
               {showSuggestions && filteredSuggestions.length > 0 && (
@@ -310,8 +332,11 @@ export function MailCompose({ onClose, replyTo }: MailComposeProps) {
                       onClick={() => {
                         setToInput(email);
                         setShowSuggestions(false);
+                        setHighlightedIndex(-1); // Reset highlighted index
                       }}
-                      className="cursor-pointer p-2 hover:bg-muted"
+                      className={`cursor-pointer p-2 hover:bg-muted ${
+                        highlightedIndex === index ? "bg-muted" : ""
+                      }`} // Highlight selected suggestion
                     >
                       {email}
                     </li>
