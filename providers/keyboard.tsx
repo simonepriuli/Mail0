@@ -10,8 +10,6 @@ export default function KeyboardProvider() {
 
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      // couldnt place this inside the providers since the
-
       if (event.key === NEW_MAIL_SHORTCUT && (event.metaKey || event.ctrlKey)) {
         event.preventDefault();
         setIsOpen(true);
