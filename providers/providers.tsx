@@ -6,6 +6,7 @@ import { PostHogProvider } from "posthog-js/react";
 import KeyboardProvider from "./keyboard";
 import posthog from "posthog-js";
 import { Provider } from "jotai";
+import { Suspense } from "react";
 import * as React from "react";
 
 if (typeof window !== "undefined" && process.env.NEXT_PUBLIC_POSTHOG_KEY) {
@@ -21,7 +22,9 @@ export function Providers({ children, ...props }: React.ComponentProps<typeof Ne
       <NextThemesProvider {...props}>
         <PostHogProvider client={posthog}>
           <SidebarProvider>
-            <KeyboardProvider />
+            <Suspense>
+              <KeyboardProvider />
+            </Suspense>
             {children}
           </SidebarProvider>
         </PostHogProvider>
