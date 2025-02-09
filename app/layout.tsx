@@ -7,6 +7,7 @@ import "./globals.css";
 
 import MailComposeModal from "@/components/mail/mail-compose-modal";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import KeyboardProvider from "@/providers/keyboard";
 import { Suspense } from "react";
 
 const geistSans = Geist({
@@ -34,6 +35,7 @@ export default function RootLayout({
             <Suspense>
               <MailComposeModal />
             </Suspense>
+            <KeyboardProvider />
             {children}
           </NuqsAdapter>
         </Providers>
