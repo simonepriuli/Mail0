@@ -7,7 +7,6 @@ import "./globals.css";
 
 import MailComposeModal from "@/components/mail/mail-compose-modal";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
-import KeyboardProvider from "@/providers/keyboard";
 import { Suspense } from "react";
 
 const geistSans = Geist({
@@ -30,15 +29,14 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Providers attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-          <NuqsAdapter>
+        <NuqsAdapter>
+          <Providers attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
             <Suspense>
               <MailComposeModal />
             </Suspense>
-            <KeyboardProvider />
             {children}
-          </NuqsAdapter>
-        </Providers>
+          </Providers>
+        </NuqsAdapter>
         <Toaster position="top-center" theme="system" />
       </body>
     </html>

@@ -10,12 +10,7 @@ export default function KeyboardProvider() {
 
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      /*
-            if (event.key === SIDEBAR_KEYBOARD_SHORTCUT && (event.metaKey || event.ctrlKey)) {
-              event.preventDefault();
-              toggleSidebar();
-            }
-              */
+      // couldnt place this inside the providers since the
 
       if (event.key === NEW_MAIL_SHORTCUT && (event.metaKey || event.ctrlKey)) {
         event.preventDefault();
